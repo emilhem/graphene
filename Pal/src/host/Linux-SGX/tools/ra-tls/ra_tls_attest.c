@@ -53,7 +53,7 @@ static ssize_t rw_file(const char* path, uint8_t* buf, size_t bytes, bool do_wri
     if (fd < 0)
         return fd;
 
-    while (bytes > rv) {
+    while ((ssize_t)bytes > rv) {
         if (do_write)
             ret = write(fd, buf + rv, bytes - rv);
         else
@@ -235,7 +235,7 @@ static int create_key_and_crt(mbedtls_pk_context* key, mbedtls_x509_crt* crt,
 
     /* note that previous function wrote data at the end of the output_buf */
     if (crt_der && crt_der_size) {
-        if (*crt_der_size >= size) {
+        if (*crt_der_size >= (size_t)size) {
             /* populate crt_der only if user provided sufficiently big buffer */
             memcpy(crt_der, output_buf + output_buf_size - size, size);
         }
@@ -290,7 +290,7 @@ int ra_tls_create_key_and_crt_der(uint8_t* der_key, size_t* der_key_size,
     }
 
     /* note that previous function wrote data at the end of the output_buf */
-    if (*der_key_size >= size) {
+    if (*der_key_size >= (size_t)size) {
         /* populate der_key only if user provided sufficiently big buffer */
         memcpy(der_key, output_buf + sizeof(output_buf) - size, size);
     }
